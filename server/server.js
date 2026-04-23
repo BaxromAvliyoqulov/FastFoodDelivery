@@ -11,7 +11,8 @@ app.use(bodyParser.json());
 // --- IN-MEMORY DATABASE ---
 let config = {
   deliveryFee: 15000,
-  adminPassword: "admin" // Simple hardcoded password for now
+  adminUsername: "75burger",
+  adminPassword: "75"
 };
 
 let orders = [];
@@ -177,11 +178,11 @@ let products = [
 
 // --- AUTH ---
 app.post('/login', (req, res) => {
-  const { password } = req.body;
-  if (password === config.adminPassword) {
+  const { username, password } = req.body;
+  if (username === config.adminUsername && password === config.adminPassword) {
     res.json({ success: true, token: 'admin-secret-token-123' });
   } else {
-    res.status(401).json({ success: false, message: 'Parol xato!' });
+    res.status(401).json({ success: false, message: 'Login yoki parol xato!' });
   }
 });
 

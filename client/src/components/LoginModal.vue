@@ -19,9 +19,15 @@
       <form @submit.prevent="handleLogin" class="space-y-4">
         <div>
           <input 
+            type="text" 
+            v-model="username" 
+            ref="usernameInput"
+            placeholder="Login..." 
+            class="w-full bg-[var(--color-surface-light)] border border-transparent focus:border-[var(--color-primary-base)] rounded-xl p-4 text-center text-[var(--color-text-main)] placeholder-[var(--color-text-muted)] focus:ring-0 text-lg outline-none transition-colors mb-4"
+          >
+          <input 
             type="password" 
             v-model="password" 
-            ref="passwordInput"
             placeholder="Parol..." 
             class="w-full bg-[var(--color-surface-light)] border border-transparent focus:border-[var(--color-primary-base)] rounded-xl p-4 text-center text-[var(--color-text-main)] placeholder-[var(--color-text-muted)] focus:ring-0 text-xl tracking-widest outline-none transition-colors"
           >
@@ -59,25 +65,27 @@ const store = useAppStore()
 const router = useRouter()
 const toast = useToast()
 
+const username = ref('')
 const password = ref('')
-const passwordInput = ref(null)
+const usernameInput = ref(null)
 const isLoading = ref(false)
 
 watch(() => props.isOpen, (newVal) => {
   if (newVal) {
+    username.value = ''
     password.value = ''
     nextTick(() => {
-      if (passwordInput.value) passwordInput.value.focus()
+      if (usernameInput.value) usernameInput.value.focus()
     })
   }
 })
 
 const handleLogin = async () => {
-  if (!password.value) return
+  if (!username.value || !password.value) return
   
   isLoading.value = true
   
-  const success = await store.login(password.value)
+  const success = await store.login(username.value, password.value)
   
   isLoading.value = false
   
@@ -86,9 +94,8 @@ const handleLogin = async () => {
     emit('close')
     router.push('/admin')
   } else {
-    toast.error("Parol noto'g'ri!")
+    toast.error("Login yoki parol noto'g'ri!")
     password.value = ''
-    passwordInput.value.focus()
   }
 }
 </script>
