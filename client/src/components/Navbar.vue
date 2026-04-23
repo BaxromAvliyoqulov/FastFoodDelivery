@@ -9,11 +9,8 @@
           </router-link>
         </div>
         <div class="flex items-center space-x-4">
-          <!-- Admin link only visible if already logged in -->
-          <router-link v-if="store.isAdmin" to="/admin" class="hidden sm:block text-[var(--color-primary-base)] hover:text-[var(--color-primary-dark)] px-3 py-2 rounded-md text-sm font-bold transition-colors">Admin Panel</router-link>
-          
-          <!-- Secret Admin Icon (Hidden/Transparent) -->
-          <button v-if="!store.isAdmin" @click="isLoginModalOpen = true" class="p-1.5 rounded-full border border-[var(--color-text-muted)] opacity-5 hover:opacity-100 transition-opacity focus:outline-none">
+          <!-- Secret Admin Icon (Always visible but highly transparent) -->
+          <button @click="handleAdminClick" class="p-1.5 rounded-full border border-[var(--color-text-muted)] opacity-5 hover:opacity-100 transition-opacity focus:outline-none">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[var(--color-text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
@@ -47,4 +44,12 @@ const store = useAppStore()
 const router = useRouter()
 
 const isLoginModalOpen = ref(false)
+
+const handleAdminClick = () => {
+  if (store.isAdmin) {
+    router.push('/admin')
+  } else {
+    isLoginModalOpen.value = true
+  }
+}
 </script>

@@ -2,9 +2,17 @@
   <div class="flex flex-col md:flex-row min-h-[calc(100vh-64px)] bg-[var(--color-background)]">
     
     <!-- Sidebar / Top Tabs -->
-    <div class="w-full md:w-64 bg-[var(--color-surface-base)] border-b md:border-b-0 md:border-r border-[var(--color-surface-light)] flex-shrink-0">
+    <div class="w-full md:w-64 bg-[var(--color-surface-base)] border-b md:border-b-0 md:border-r border-[var(--color-surface-light)] flex-shrink-0 md:h-[calc(100vh-64px)] md:sticky md:top-[64px] overflow-y-auto">
       <div class="flex md:flex-col overflow-x-auto md:overflow-visible p-4 gap-2 h-full">
         
+        <button 
+          @click="activeTab = 'dashboard'" 
+          :class="['px-4 py-3 rounded-xl text-sm font-bold text-left whitespace-nowrap transition-colors flex items-center gap-3', activeTab === 'dashboard' ? 'bg-[var(--color-primary-base)] text-white' : 'text-[var(--color-text-main)] hover:bg-[var(--color-surface-light)]']"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>
+          Hisobot (Dashboard)
+        </button>
+
         <button 
           @click="activeTab = 'orders'" 
           :class="['px-4 py-3 rounded-xl text-sm font-bold text-left whitespace-nowrap transition-colors flex items-center gap-3', activeTab === 'orders' ? 'bg-[var(--color-primary-base)] text-white' : 'text-[var(--color-text-main)] hover:bg-[var(--color-surface-light)]']"
@@ -52,6 +60,7 @@
 
     <!-- Content Area -->
     <div class="flex-1 p-4 md:p-8 overflow-y-auto">
+      <AdminDashboard v-if="activeTab === 'dashboard'" />
       <AdminOrders v-if="activeTab === 'orders'" />
       <AdminProducts v-if="activeTab === 'products'" />
       <AdminCategories v-if="activeTab === 'categories'" />
@@ -65,6 +74,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAppStore } from '../store'
+import AdminDashboard from './admin/AdminDashboard.vue'
 import AdminOrders from './admin/AdminOrders.vue'
 import AdminProducts from './admin/AdminProducts.vue'
 import AdminCategories from './admin/AdminCategories.vue'
@@ -72,10 +82,9 @@ import AdminSettings from './admin/AdminSettings.vue'
 
 const store = useAppStore()
 const router = useRouter()
-const activeTab = ref('orders')
+const activeTab = ref('dashboard')
 
 onMounted(() => {
-  // Ensure we have the latest menu data for the admin tabs
   store.fetchMenuData()
 })
 
