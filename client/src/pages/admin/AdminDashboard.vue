@@ -44,27 +44,56 @@
 
     </div>
 
-    <!-- Recent Activity -->
+    <!-- Today's Orders DataTable -->
     <div class="bg-[var(--color-surface-base)] border border-[var(--color-surface-light)] rounded-3xl p-6 shadow-sm">
-      <h2 class="text-lg font-bold text-[var(--color-text-main)] mb-4">So'nggi harakatlar</h2>
-      <div v-if="recentOrders.length === 0" class="text-[var(--color-text-muted)] text-sm">Hozircha ma'lumot yo'q.</div>
-      <ul v-else class="space-y-4">
-        <li v-for="order in recentOrders" :key="order.id" class="flex justify-between items-center border-b border-[var(--color-surface-light)] pb-4 last:border-0 last:pb-0">
-          <div>
-            <div class="font-bold text-[var(--color-text-main)]">Buyurtma #{{ order.id }}</div>
-            <div class="text-xs text-[var(--color-text-muted)]">{{ formatDate(order.date) }}</div>
-          </div>
-          <div class="text-right">
-            <div class="font-bold text-[var(--color-primary-base)]">{{ formatPrice(order.total) }}</div>
-            <div class="text-xs font-bold" :class="{
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <h2 class="text-lg font-bold text-[var(--color-text-main)]">Bugungi buyurtmalar ro'yxati</h2>
+        <button 
+          @click="exportToExcel" 
+          :disabled="todayOrders.length === 0"
+          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+          Excel (CSV) ga yuklash
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-[var(--color-text-main)]">
+          <thead class="text-xs text-[var(--color-text-muted)] uppercase bg-[var(--color-surface-light)]">
+            <tr>
+              <th scope="col" class="px-6 py-4 rounded-tl-xl">ID</th>
+              <th scope="col" class="px-6 py-4">Sana</th>
+              <th scope="col" class="px-6 py-4">Taomlar</th>
+              <th scope="col" class="px-6 py-4">Summa</th>
+              <th scope="col" class="px-6 py-4 rounded-tr-xl">Holati</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-if="todayOrders.length === 0">
+              <td colspan="5" class="px-6 py-8 text-center text-[var(--color-text-muted)]">Bugun hali buyurtmalar tushmadi. Yangi kun uchun jadval bo'm-bo'sh!</td>
+            </tr>
+            <tr v-else v-for="order in todayOrders" :key="order.id" class="border-b border-[var(--color-surface-light)] last:border-0 hover:bg-[var(--color-surface-light)]/40 transition-colors">
+              <td class="px-6 py-4 font-bold">#{{ order.id }}</td>
+              <td class="px-6 py-4 whitespace-nowrap">{{ formatDate(order.date) }}</td>
+              <td class="px-6 py-4 min-w-[200px]">
+                <div v-for="(item, i) in order.items" :key="i" class="text-xs mb-1 last:mb-0">
+                  <span class="font-bold text-[var(--color-primary-base)]">{{ item.quantity }}x</span> {{ item.name }} <span v-if="item.variant" class="text-[var(--color-text-muted)]">({{ item.variant.name }})</span>
+                </div>
+              </td>
+              <td class="px-6 py-4 font-bold whitespace-nowrap">{{ formatPrice(order.total) }}</td>
+              <td class="px-6 py-4 font-bold">
+                <span :class="{
                   'text-yellow-500': order.status === 'Yangi',
                   'text-blue-500': order.status === 'Qabul qilindi',
                   'text-green-500': order.status === 'Yetkazildi',
                   'text-red-500': order.status === 'Bekor qilindi'
-                }">{{ order.status }}</div>
-          </div>
-        </li>
-      </ul>
+                }">{{ order.status }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>
@@ -149,8 +178,38 @@ const monthOrdersCount = computed(() => monthOrders.value.length)
 
 const totalDeliveredCount = computed(() => orders.value.filter(o => o.status === 'Yetkazildi').length)
 
-const recentOrders = computed(() => {
-  return [...orders.value].reverse().slice(0, 5) // Last 5 orders
-})
+const exportToExcel = () => {
+  if (todayOrders.value.length === 0) return;
+
+  // Add UTF-8 BOM to fix Excel encoding issues
+  const BOM = '\uFEFF';
+  const headers = ['Buyurtma ID', 'Sana', 'Taomlar', 'Summa (UZS)', 'Holati'];
+  
+  const rows = todayOrders.value.map(order => {
+    const itemsStr = order.items.map(item => `${item.quantity}x ${item.name}${item.variant ? ` (${item.variant.name})` : ''}`).join('; ');
+    return [
+      `#${order.id}`,
+      formatDate(order.date),
+      `"${itemsStr}"`, // wrap in quotes to handle commas/semicolons inside
+      order.total,
+      order.status
+    ];
+  });
+
+  const csvContent = BOM + [
+    headers.join(','),
+    ...rows.map(row => row.join(','))
+  ].join('\n');
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  const dateStr = new Date().toISOString().split('T')[0];
+  link.setAttribute('download', `kunlik_buyurtmalar_${dateStr}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
 
 </script>
