@@ -4,8 +4,16 @@
       <div class="flex justify-between h-16">
         <div class="flex items-center">
           <!-- Logo -->
-          <router-link to="/" class="flex-shrink-0 flex items-center">
-            <span class="font-bold text-xl text-[var(--color-primary-base)]">FastFood Delivery</span>
+          <router-link to="/" class="flex-shrink-0 flex items-center gap-2">
+            <div class="w-9 h-9 bg-[var(--color-primary-base)] rounded-xl flex items-center justify-center shadow-md">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 14h18a1 1 0 010 2H3a1 1 0 010-2zm1-4h16c.55 0 1-.45 1-1 0-3.53-3.13-6-8-6H11C6.13 3 3 5.47 3 9c0 .55.45 1 1 1zm2-.5c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5s-.22.5-.5.5h-11a.5.5 0 01-.5-.5zM3 18h18c.55 0 1 .45 1 1s-.45 1-1 1H3c-.55 0-1-.45-1-1s.45-1 1-1z"/>
+              </svg>
+            </div>
+            <div class="flex items-baseline gap-0">
+              <span class="font-extrabold text-xl text-[var(--color-primary-base)] tracking-tight">75</span>
+              <span class="font-bold text-lg text-[var(--color-text-main)] tracking-tight">Burger</span>
+            </div>
           </router-link>
         </div>
         <div class="flex items-center space-x-4">

@@ -1,10 +1,19 @@
 import { defineStore } from 'pinia'
+import { API_URL } from '../config'
 
 export const useAppStore = defineStore('app', {
   state: () => ({
     // Cart State
     cartItems: [],
     isCartOpen: false,
+    
+    // Checkout / User Info State
+    isCheckoutOpen: false,
+    userInfo: JSON.parse(localStorage.getItem('userInfo') || 'null') || {
+      name: '',
+      phone: '',
+      address: ''
+    },
     
     // Global Menu State
     categories: [],
@@ -30,7 +39,7 @@ export const useAppStore = defineStore('app', {
     async fetchMenuData() {
       this.isMenuLoading = true
       try {
-        const response = await fetch('http://localhost:5000/data')
+        const response = await fetch(`${API_URL}/data`)
         const data = await response.json()
         if (data.success) {
           this.categories = data.categories
@@ -45,7 +54,7 @@ export const useAppStore = defineStore('app', {
     },
     async login(username, password) {
       try {
-        const response = await fetch('http://localhost:5000/login', {
+        const response = await fetch(`${API_URL}/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password })
@@ -92,16 +101,25 @@ export const useAppStore = defineStore('app', {
       }
     },
     incrementQuantity(index) {
-      this.cartItems[index].quantity++
       const item = this.cartItems[index]
-      const basePrice = item.variant ? item.variant.price : (item.totalPrice / (item.quantity - 1))
+      if (item.unit === 'kg') {
+        item.quantity = parseFloat((item.quantity + 0.1).toFixed(2))
+      } else {
+        item.quantity++
+      }
+      const basePrice = item.variant ? item.variant.price : (item.totalPrice / (item.unit === 'kg' ? (item.quantity - 0.1) : (item.quantity - 1)))
       item.totalPrice = basePrice * item.quantity
     },
     decrementQuantity(index) {
-      if (this.cartItems[index].quantity > 1) {
-        this.cartItems[index].quantity--
-        const item = this.cartItems[index]
-        const basePrice = item.variant ? item.variant.price : (item.totalPrice / (item.quantity + 1))
+      const item = this.cartItems[index]
+      const step = item.unit === 'kg' ? 0.1 : 1
+      if (item.quantity > step) {
+        if (item.unit === 'kg') {
+          item.quantity = parseFloat((item.quantity - 0.1).toFixed(2))
+        } else {
+          item.quantity--
+        }
+        const basePrice = item.variant ? item.variant.price : (item.totalPrice / (item.unit === 'kg' ? (item.quantity + 0.1) : (item.quantity + 1)))
         item.totalPrice = basePrice * item.quantity
       } else {
         this.removeFromCart(index)
@@ -110,6 +128,16 @@ export const useAppStore = defineStore('app', {
     clearCart() {
       this.cartItems = []
       this.isCartOpen = false
+    },
+    openCheckout() {
+      this.isCheckoutOpen = true
+    },
+    closeCheckout() {
+      this.isCheckoutOpen = false
+    },
+    setUserInfo(info) {
+      this.userInfo = { ...info }
+      localStorage.setItem('userInfo', JSON.stringify(this.userInfo))
     }
   }
 })

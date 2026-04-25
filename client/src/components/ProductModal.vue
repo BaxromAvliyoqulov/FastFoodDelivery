@@ -43,19 +43,54 @@
 
 
         
-        <!-- Quantity Selector -->
-        <div class="flex items-center justify-center space-x-6 py-2">
-          <button @click="decrement" class="w-10 h-10 rounded-full bg-[var(--color-surface-light)] text-[var(--color-text-main)] flex items-center justify-center hover:bg-[var(--color-text-muted)]/20 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-            </svg>
-          </button>
-          <span class="text-2xl font-semibold text-[var(--color-text-main)] w-8 text-center">{{ quantity }}</span>
-          <button @click="increment" class="w-10 h-10 rounded-full bg-[var(--color-surface-light)] text-[var(--color-text-main)] flex items-center justify-center hover:bg-[var(--color-text-muted)]/20 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-          </button>
+        <div class="py-2">
+          <!-- KG Selector UI -->
+          <div v-if="product?.unit === 'kg'">
+            <h3 class="text-lg font-semibold text-[var(--color-text-main)] mb-4 text-center">Vaznni tanlang (kg)</h3>
+            
+            <!-- Quick Presets -->
+            <div class="grid grid-cols-4 gap-2 mb-6">
+              <button 
+                v-for="preset in [0.5, 1, 1.5, 2]" 
+                :key="preset"
+                @click="quantity = preset"
+                class="py-2 rounded-xl text-xs font-bold transition-all border"
+                :class="quantity === preset 
+                  ? 'bg-[var(--color-primary-base)] border-[var(--color-primary-base)] text-white shadow-lg' 
+                  : 'bg-[var(--color-surface-light)] border-transparent text-[var(--color-text-main)] hover:bg-[var(--color-text-muted)]/20'"
+              >
+                {{ preset }} kg
+              </button>
+            </div>
+
+            <!-- Manual Stepper -->
+            <div class="flex items-center justify-center space-x-6">
+              <button @click="decrementWeight" class="w-12 h-12 rounded-xl bg-[var(--color-surface-light)] text-[var(--color-text-main)] flex items-center justify-center hover:bg-[var(--color-text-muted)]/20 transition-all border border-transparent active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" /></svg>
+              </button>
+              <div class="text-center">
+                <span class="text-3xl font-extrabold text-[var(--color-primary-base)]">{{ quantity.toFixed(2) }}</span>
+                <span class="block text-[var(--color-text-muted)] text-xs font-bold uppercase mt-1">kilogramm</span>
+              </div>
+              <button @click="incrementWeight" class="w-12 h-12 rounded-xl bg-[var(--color-surface-light)] text-[var(--color-text-main)] flex items-center justify-center hover:bg-[var(--color-text-muted)]/20 transition-all border border-transparent active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Standard Quantity Selector -->
+          <div v-else class="flex items-center justify-center space-x-6">
+            <button @click="decrement" class="w-12 h-12 rounded-xl bg-[var(--color-surface-light)] text-[var(--color-text-main)] flex items-center justify-center hover:bg-[var(--color-text-muted)]/20 transition-all active:scale-95">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" /></svg>
+            </button>
+            <div class="text-center">
+              <span class="text-3xl font-extrabold text-[var(--color-text-main)]">{{ quantity }}</span>
+              <span class="block text-[var(--color-text-muted)] text-xs font-bold uppercase mt-1">ta mahsulot</span>
+            </div>
+            <button @click="increment" class="w-12 h-12 rounded-xl bg-[var(--color-surface-light)] text-[var(--color-text-main)] flex items-center justify-center hover:bg-[var(--color-text-muted)]/20 transition-all active:scale-95">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -113,6 +148,9 @@ const totalPrice = computed(() => {
 const increment = () => { quantity.value++ }
 const decrement = () => { if (quantity.value > 1) quantity.value-- }
 
+const incrementWeight = () => { quantity.value = parseFloat((quantity.value + 0.1).toFixed(2)) }
+const decrementWeight = () => { if (quantity.value > 0.1) quantity.value = parseFloat((quantity.value - 0.1).toFixed(2)) }
+
 const close = () => {
   emit('close')
 }
@@ -121,6 +159,7 @@ const addToOrder = () => {
   const orderItem = {
     productId: props.product.id,
     name: props.product.name,
+    unit: props.product.unit || 'dona',
     variant: selectedVariant.value,
     quantity: quantity.value,
     totalPrice: totalPrice.value

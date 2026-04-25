@@ -61,6 +61,13 @@
               <label class="block text-[var(--color-text-muted)] text-xs font-bold mb-1">Rasm URL (Internetdan silka)</label>
               <input v-model="form.image" type="url" placeholder="https://..." class="w-full bg-[var(--color-surface-light)] rounded-xl p-2.5 text-[var(--color-text-main)] outline-none focus:ring-1 focus:ring-[var(--color-primary-base)]">
             </div>
+            <div>
+              <label class="block text-[var(--color-text-muted)] text-xs font-bold mb-1">O'lchov birligi</label>
+              <select v-model="form.unit" class="w-full bg-[var(--color-surface-light)] rounded-xl p-2.5 text-[var(--color-text-main)] outline-none focus:ring-1 focus:ring-[var(--color-primary-base)]">
+                <option value="dona">Dona (ta)</option>
+                <option value="kg">Kilogramm (kg)</option>
+              </select>
+            </div>
           </div>
 
           <div>
@@ -118,6 +125,7 @@ const getEmptyForm = () => ({
   name: '',
   description: '',
   price: 0,
+  unit: 'dona',
   image: '',
   variants: []
 })

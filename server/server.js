@@ -1,21 +1,59 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const TelegramBot = require('node-telegram-bot-api');
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(bodyParser.json());
 
-// --- IN-MEMORY DATABASE ---
+// --- TELEGRAM BOT CONFIG ---
+const BOT_TOKEN = process.env.BOT_TOKEN || '8548307430:AAEcOQe8hLxkXbmeVJcQJu__7nPBMuod1v0';
+const ADMIN_CHAT_IDS = process.env.ADMIN_CHAT_IDS ? process.env.ADMIN_CHAT_IDS.split(',') : ['587788509', '7496952374'];
+const bot = new TelegramBot(BOT_TOKEN, { polling: false });
+
+// --- MONGODB CONNECTION ---
+// --- ORDER SCHEMA ---
+const OrderSchema = new mongoose.Schema({
+  name: String,
+  phone: String,
+  address: String,
+  items: Array,
+  subtotal: Number,
+  deliveryFee: Number,
+  total: Number,
+  status: { type: String, default: 'Yangi' },
+  date: { type: Date, default: Date.now }
+});
+
+const Order = mongoose.model('Order', OrderSchema);
+
+// --- IN-MEMORY FALLBACK ---
+let orders = []; // Fallback if MongoDB is not connected
+let isMongoConnected = false;
+
+const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/75burger_db';
+
+mongoose.connect(mongoURI)
+  .then(() => {
+    console.log('Connected to MongoDB:', mongoURI.includes('127.0.0.1') ? 'Local' : 'Cloud Atlas');
+    isMongoConnected = true;
+  })
+  .catch(err => {
+    console.error('Could not connect to MongoDB, using in-memory fallback:', err.message);
+    isMongoConnected = false;
+  });
+
+// --- IN-MEMORY CONFIG/PRODUCTS ---
 let config = {
   deliveryFee: 15000,
   adminUsername: "75burger",
   adminPassword: "75"
 };
-
-let orders = [];
 
 let categories = [
   { id: 'c1', name: '🍔 Taomlar' },
@@ -102,52 +140,62 @@ let products = [
     ]
   },
   {
-    id: 7,
-    categoryId: 'c1',
-    name: 'GRIL',
-    description: "Mazza qilib pishirilgan tovuq gril",
-    price: 75000,
-    image: 'https://images.unsplash.com/photo-1598514982205-f36b96d1e8d4?auto=format&fit=crop&w=400&q=80',
-    variants: []
-  },
-  {
     id: 8,
     categoryId: 'c1',
     name: 'BALIQ',
-    description: "Maxsus ziravorlar bilan qovurilgan baliq",
-    price: 70000,
+    description: "Maxsus ziravorlar bilan qovurilgan baliq (1 kg narxi)",
+    price: 85000,
+    unit: 'kg',
     image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=400&q=80',
     variants: []
   },
   {
     id: 9,
     categoryId: 'c2',
-    name: 'Fresh Mojito',
-    description: "Muzdek qulupnay yoki yalpizli mojito",
-    price: 15000,
-    image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=400&q=80',
+    name: 'COCA-COLA',
+    description: "Muzdek Coca-Cola ichimligi",
+    price: 7000,
+    image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=400&q=80',
     variants: [
-      { id: 'v17', name: 'Qulupnayli', price: 15000 },
-      { id: 'v18', name: 'Yalpizli', price: 15000 },
+      { id: 'v_c1', name: '0.5 L', price: 7000 },
+      { id: 'v_c2', name: '1.0 L', price: 12000 },
+      { id: 'v_c3', name: '1.5 L', price: 15000 },
+      { id: 'v_c4', name: '2.0 L', price: 18000 }
     ]
   },
   {
     id: 10,
     categoryId: 'c2',
-    name: 'Coca-Cola',
-    description: "Yaxna ichimlik",
+    name: 'PEPSI',
+    description: "Muzdek Pepsi ichimligi",
     price: 7000,
-    image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=400&q=80',
+    image: 'https://t3.ftcdn.net/jpg/04/01/01/08/360_F_401010866_2vtyb52QWBQVzdwU3UUBIisSMx1tBM03.jpg',
     variants: [
-      { id: 'v19', name: '0.5 L', price: 7000 },
-      { id: 'v20', name: '1 L', price: 12000 },
+      { id: 'v_p1', name: '0.5 L', price: 7000 },
+      { id: 'v_p2', name: '1.0 L', price: 12000 },
+      { id: 'v_p3', name: '1.5 L', price: 15000 },
+      { id: 'v_p4', name: '2.0 L', price: 18000 }
     ]
   },
   {
     id: 11,
     categoryId: 'c2',
+    name: 'FANTA',
+    description: "Muzdek Fanta ichimligi",
+    price: 7000,
+    image: 'https://images.unsplash.com/photo-1624517452488-04869289c4ca?auto=format&fit=crop&w=400&q=80',
+    variants: [
+      { id: 'v_f1', name: '0.5 L', price: 7000 },
+      { id: 'v_f2', name: '1.0 L', price: 12000 },
+      { id: 'v_f3', name: '1.5 L', price: 15000 },
+      { id: 'v_f4', name: '2.0 L', price: 18000 }
+    ]
+  },
+  {
+    id: 12,
+    categoryId: 'c2',
     name: 'Klassik Milkshake',
-    description: "Quyoshli kunlar uchun muzdek milkshake",
+    description: "Quyoshli kunlar uchun milkshake",
     price: 20000,
     image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=400&q=80',
     variants: [
@@ -157,24 +205,17 @@ let products = [
     ]
   },
   {
-    id: 12,
+    id: 13,
     categoryId: 'c3',
     name: 'Klassik Chizkeyk',
-    description: "Original New York chizkeyki, qulupnay qiyomi bilan",
+    description: "Original New York chizkeyki",
     price: 25000,
     image: 'https://images.unsplash.com/photo-1524351199678-941a58a3df50?auto=format&fit=crop&w=400&q=80',
     variants: []
-  },
-  {
-    id: 13,
-    categoryId: 'c3',
-    name: 'Shirin Lavash',
-    description: "Nutella va banan bo'laklari bilan shirin lavash",
-    price: 20000,
-    image: 'https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=400&q=80',
-    variants: []
   }
 ];
+console.log("DEBUG: Products count =", products.length);
+console.log("DEBUG: Pepsi variant 1 name =", products.find(p => p.name === 'PEPSI')?.variants[0]?.name);
 
 // --- AUTH ---
 app.post('/login', (req, res) => {
@@ -221,7 +262,6 @@ app.put('/categories/:id', (req, res) => {
 
 app.delete('/categories/:id', (req, res) => {
   categories = categories.filter(c => c.id !== req.params.id);
-  // Optional: delete related products or move them
   res.json({ success: true });
 });
 
@@ -249,31 +289,104 @@ app.delete('/products/:id', (req, res) => {
 });
 
 // --- ORDERS ---
-app.post('/order', (req, res) => {
-  const newOrder = req.body;
-  const orderToStore = {
-    id: Date.now(),
-    ...newOrder,
-    status: 'Yangi', // Status can be: Yangi, Qabul qilindi, Yetkazildi, Bekor qilindi
-    date: newOrder.date || new Date().toISOString()
-  };
-  orders.push(orderToStore);
-  console.log('\n--- YANGI BUYURTMA ---');
-  console.log(JSON.stringify(orderToStore, null, 2));
-  res.status(200).json({ success: true, order: orderToStore });
+app.post('/order', async (req, res) => {
+  try {
+    const newOrderData = req.body;
+    const customer = newOrderData.customer || {};
+
+    const orderData = {
+      name: customer.name || '',
+      phone: customer.phone || '',
+      address: customer.address || '',
+      items: newOrderData.items || [],
+      subtotal: newOrderData.subtotal || 0,
+      deliveryFee: newOrderData.deliveryFee || 0,
+      total: newOrderData.total || 0,
+      status: 'Yangi',
+      date: newOrderData.date || new Date()
+    };
+
+    let savedOrder;
+    let orderNumber;
+
+    if (isMongoConnected) {
+      const count = await Order.countDocuments();
+      orderNumber = count + 1;
+      const newOrder = new Order(orderData);
+      savedOrder = await newOrder.save();
+      console.log('Order saved to MongoDB');
+    } else {
+      orderNumber = orders.length + 1;
+      savedOrder = { ...orderData, _id: 'mem_' + Date.now() };
+      orders.push(savedOrder);
+      console.log('Order saved to Memory (Fallback)');
+    }
+
+    // --- TELEGRAM NOTIFICATION ---
+    const itemsList = savedOrder.items.map(item =>
+      `- ${item.name}${item.variant ? ` (${item.variant.name})` : ''} x${item.unit === 'kg' ? item.quantity.toFixed(2) : item.quantity}${item.unit === 'kg' ? 'kg' : ''}`
+    ).join('\n');
+
+    const message = `
+🚀 *YANGI BUYURTMA #${orderNumber}*
+
+👤 *Mijoz:* ${savedOrder.name}
+📞 *Tel:* ${savedOrder.phone}
+📍 *Manzil:* ${savedOrder.address}
+
+🍱 *Taomlar:*
+${itemsList}
+
+💰 *Jami:* ${savedOrder.total.toLocaleString()} UZS
+📅 *Sana:* ${new Date(savedOrder.date).toLocaleString('uz-UZ')}
+
+#buyurtma #${orderNumber}
+    `;
+
+    ADMIN_CHAT_IDS.forEach(chatId => {
+      bot.sendMessage(chatId, message, { parse_mode: 'Markdown' })
+        .then(() => console.log(`Telegram sent to ${chatId}`))
+        .catch(err => console.error(`Telegram error (${chatId}):`, err.message));
+    });
+
+    res.status(200).json({ success: true, order: { ...savedOrder, id: savedOrder._id } });
+  } catch (error) {
+    console.error("Order process error:", error);
+    res.status(500).json({ success: false, message: 'Serverda xatolik' });
+  }
 });
 
-app.get('/orders', (req, res) => {
-  res.status(200).json({ success: true, orders });
+app.get('/orders', async (req, res) => {
+  try {
+    if (isMongoConnected) {
+      const allOrders = await Order.find().sort({ date: -1 });
+      res.status(200).json({ success: true, orders: allOrders });
+    } else {
+      res.status(200).json({ success: true, orders: [...orders].reverse() });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Serverda xatolik' });
+  }
 });
 
-app.put('/orders/:id/status', (req, res) => {
-  const order = orders.find(o => o.id == req.params.id);
-  if (order) {
-    order.status = req.body.status;
-    res.json({ success: true, order });
-  } else {
+app.put('/orders/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (isMongoConnected && !id.startsWith('mem_')) {
+      const updatedOrder = await Order.findByIdAndUpdate(id, { status }, { new: true });
+      return res.json({ success: true, order: updatedOrder });
+    } else {
+      const order = orders.find(o => o._id === id);
+      if (order) {
+        order.status = status;
+        return res.json({ success: true, order });
+      }
+    }
     res.status(404).json({ success: false, message: 'Order not found' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Serverda xatolik' });
   }
 });
 

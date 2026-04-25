@@ -13,6 +13,11 @@ const routes = [
     name: 'Admin',
     component: Admin,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/success',
+    name: 'OrderSuccess',
+    component: () => import('../pages/OrderSuccess.vue')
   }
 ]
 

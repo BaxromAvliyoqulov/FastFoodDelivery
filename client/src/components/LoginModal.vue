@@ -6,6 +6,13 @@
     <!-- Modal Content -->
     <div class="relative bg-[var(--color-surface-base)] w-full max-w-sm mx-4 rounded-3xl shadow-2xl p-6 animate-slide-up border border-[var(--color-surface-light)]">
       
+      <!-- Close Button -->
+      <button @click="$emit('close')" class="absolute top-4 right-4 text-[var(--color-text-muted)] hover:text-[var(--color-text-main)] transition bg-[var(--color-surface-light)] rounded-full p-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
       <div class="text-center mb-6">
         <div class="w-16 h-16 bg-[var(--color-surface-light)] rounded-2xl mx-auto flex items-center justify-center mb-4">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[var(--color-primary-base)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">

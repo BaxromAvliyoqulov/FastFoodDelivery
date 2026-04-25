@@ -53,9 +53,16 @@
                 <div>
                   <h3 class="text-lg font-bold text-[var(--color-text-main)] leading-tight">{{ product.name }}</h3>
                   <p class="text-[var(--color-text-muted)] text-xs mt-1 line-clamp-2 leading-snug">{{ product.description }}</p>
+                  
+                  <!-- Variants Indicator -->
+                  <div v-if="product.variants && product.variants.length > 0" class="flex flex-wrap gap-1 mt-2">
+                    <span v-for="v in product.variants" :key="v.id" class="text-[10px] bg-[var(--color-surface-light)] text-[var(--color-text-muted)] px-1.5 py-0.5 rounded-md border border-[var(--color-surface-light)]">
+                      {{ v.name }}
+                    </span>
+                  </div>
                 </div>
                 <div class="mt-3 font-bold text-[var(--color-primary-base)]">
-                  {{ formatPrice(product.price) }}
+                  {{ product.variants && product.variants.length > 0 ? 'dan ' : '' }}{{ formatPrice(product.price) }}
                 </div>
               </div>
               
@@ -91,10 +98,6 @@ import { useAppStore } from '../store'
 const toast = useToast()
 const store = useAppStore()
 
-onMounted(() => {
-  store.fetchMenuData()
-})
-
 const formatPrice = (price) => {
   return price.toLocaleString('uz-UZ') + ' UZS'
 }
@@ -119,6 +122,10 @@ const scrollToCategory = (categoryId) => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
+onMounted(() => {
+  store.fetchMenuData()
+})
+
 // Modal logic
 const isModalOpen = ref(false)
 const selectedProduct = ref(null)
@@ -137,7 +144,9 @@ const closeModal = () => {
 
 const handleAddToOrder = (orderItem) => {
   store.addToCart(orderItem)
-  toast.success(`${orderItem.quantity}x ${orderItem.name} savatga qo'shildi!`)
+  const unitLabel = orderItem.unit === 'kg' ? 'kg' : 'ta'
+  const qtyDisplay = orderItem.unit === 'kg' ? orderItem.quantity.toFixed(2) : orderItem.quantity
+  toast.success(`${qtyDisplay} ${unitLabel} ${orderItem.name} savatga qo'shildi!`)
 }
 </script>
 

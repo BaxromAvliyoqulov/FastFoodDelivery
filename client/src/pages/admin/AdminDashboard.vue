@@ -12,87 +12,179 @@
     </div>
 
     <!-- Stats Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
       
       <!-- Today's Revenue -->
-      <div class="bg-[var(--color-surface-base)] border border-[var(--color-surface-light)] rounded-3xl p-6 shadow-sm flex flex-col justify-center items-start">
-        <div class="text-[var(--color-text-muted)] text-sm font-bold mb-1">Bugungi daromad</div>
-        <div class="text-2xl lg:text-3xl font-extrabold text-[var(--color-primary-base)]">{{ formatPrice(todayRevenue) }}</div>
-        <div class="text-[var(--color-text-muted)] text-xs mt-2">{{ todayOrdersCount }} ta buyurtma</div>
+      <div class="bg-[var(--color-surface-base)] border border-[var(--color-surface-light)] rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm">
+        <div class="flex items-center gap-2 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[var(--color-primary-base)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <span class="text-[var(--color-text-muted)] text-xs font-bold uppercase">Bugun</span>
+        </div>
+        <div class="text-xl sm:text-2xl font-extrabold text-[var(--color-primary-base)]">{{ formatPrice(todayRevenue) }}</div>
+        <div class="text-[var(--color-text-muted)] text-xs mt-1">{{ todayOrdersCount }} ta buyurtma</div>
       </div>
 
-      <!-- This Week's Revenue -->
-      <div class="bg-[var(--color-surface-base)] border border-[var(--color-surface-light)] rounded-3xl p-6 shadow-sm flex flex-col justify-center items-start">
-        <div class="text-[var(--color-text-muted)] text-sm font-bold mb-1">Shu hafta</div>
-        <div class="text-2xl font-bold text-[var(--color-text-main)]">{{ formatPrice(weekRevenue) }}</div>
-        <div class="text-[var(--color-text-muted)] text-xs mt-2">{{ weekOrdersCount }} ta buyurtma</div>
+      <!-- This Week -->
+      <div class="bg-[var(--color-surface-base)] border border-[var(--color-surface-light)] rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm">
+        <div class="flex items-center gap-2 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-blue-500/15 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+          </div>
+          <span class="text-[var(--color-text-muted)] text-xs font-bold uppercase">Hafta</span>
+        </div>
+        <div class="text-xl sm:text-2xl font-bold text-[var(--color-text-main)]">{{ formatPrice(weekRevenue) }}</div>
+        <div class="text-[var(--color-text-muted)] text-xs mt-1">{{ weekOrdersCount }} ta buyurtma</div>
       </div>
 
-      <!-- This Month's Revenue -->
-      <div class="bg-[var(--color-surface-base)] border border-[var(--color-surface-light)] rounded-3xl p-6 shadow-sm flex flex-col justify-center items-start">
-        <div class="text-[var(--color-text-muted)] text-sm font-bold mb-1">Shu oy</div>
-        <div class="text-2xl font-bold text-[var(--color-text-main)]">{{ formatPrice(monthRevenue) }}</div>
-        <div class="text-[var(--color-text-muted)] text-xs mt-2">{{ monthOrdersCount }} ta buyurtma</div>
+      <!-- This Month -->
+      <div class="bg-[var(--color-surface-base)] border border-[var(--color-surface-light)] rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm">
+        <div class="flex items-center gap-2 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-purple-500/15 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+          </div>
+          <span class="text-[var(--color-text-muted)] text-xs font-bold uppercase">Oy</span>
+        </div>
+        <div class="text-xl sm:text-2xl font-bold text-[var(--color-text-main)]">{{ formatPrice(monthRevenue) }}</div>
+        <div class="text-[var(--color-text-muted)] text-xs mt-1">{{ monthOrdersCount }} ta buyurtma</div>
       </div>
 
       <!-- Total Delivered -->
-      <div class="bg-[var(--color-surface-base)] border border-[var(--color-surface-light)] rounded-3xl p-6 shadow-sm flex flex-col justify-center items-start">
-        <div class="text-[var(--color-text-muted)] text-sm font-bold mb-1">Umumiy muvaffaqiyatli</div>
-        <div class="text-2xl font-bold text-green-500">{{ totalDeliveredCount }} ta buyurtma</div>
-        <div class="text-[var(--color-text-muted)] text-xs mt-2">Barcha vaqt uchun</div>
+      <div class="bg-[var(--color-surface-base)] border border-[var(--color-surface-light)] rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm">
+        <div class="flex items-center gap-2 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-green-500/15 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <span class="text-[var(--color-text-muted)] text-xs font-bold uppercase">Yetkazildi</span>
+        </div>
+        <div class="text-xl sm:text-2xl font-bold text-green-400">{{ totalDeliveredCount }}</div>
+        <div class="text-[var(--color-text-muted)] text-xs mt-1">Barcha vaqt uchun</div>
       </div>
-
     </div>
 
-    <!-- Today's Orders DataTable -->
-    <div class="bg-[var(--color-surface-base)] border border-[var(--color-surface-light)] rounded-3xl p-6 shadow-sm">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <h2 class="text-lg font-bold text-[var(--color-text-main)]">Bugungi buyurtmalar ro'yxati</h2>
-        <button 
-          @click="exportToExcel" 
-          :disabled="todayOrders.length === 0"
-          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-          Excel (CSV) ga yuklash
-        </button>
+    <!-- 🔥 Bestseller Section -->
+    <div class="bg-[var(--color-surface-base)] border border-[var(--color-surface-light)] rounded-3xl p-5 sm:p-6 shadow-sm mb-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-5">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🔥</span>
+          <h2 class="text-lg font-bold text-[var(--color-text-main)]">Eng ko'p sotilganlar</h2>
+        </div>
+        <!-- Period Tabs -->
+        <div class="flex bg-[var(--color-background)] rounded-xl p-1 gap-1">
+          <button 
+            v-for="period in periods" 
+            :key="period.key"
+            @click="activePeriod = period.key"
+            class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
+            :class="activePeriod === period.key 
+              ? 'bg-[var(--color-primary-base)] text-white shadow-sm' 
+              : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-main)]'"
+          >
+            {{ period.label }}
+          </button>
+        </div>
       </div>
 
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm text-[var(--color-text-main)]">
-          <thead class="text-xs text-[var(--color-text-muted)] uppercase bg-[var(--color-surface-light)]">
-            <tr>
-              <th scope="col" class="px-6 py-4 rounded-tl-xl">ID</th>
-              <th scope="col" class="px-6 py-4">Sana</th>
-              <th scope="col" class="px-6 py-4">Taomlar</th>
-              <th scope="col" class="px-6 py-4">Summa</th>
-              <th scope="col" class="px-6 py-4 rounded-tr-xl">Holati</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-if="todayOrders.length === 0">
-              <td colspan="5" class="px-6 py-8 text-center text-[var(--color-text-muted)]">Bugun hali buyurtmalar tushmadi. Yangi kun uchun jadval bo'm-bo'sh!</td>
-            </tr>
-            <tr v-else v-for="order in todayOrders" :key="order.id" class="border-b border-[var(--color-surface-light)] last:border-0 hover:bg-[var(--color-surface-light)]/40 transition-colors">
-              <td class="px-6 py-4 font-bold">#{{ order.id }}</td>
-              <td class="px-6 py-4 whitespace-nowrap">{{ formatDate(order.date) }}</td>
-              <td class="px-6 py-4 min-w-[200px]">
-                <div v-for="(item, i) in order.items" :key="i" class="text-xs mb-1 last:mb-0">
-                  <span class="font-bold text-[var(--color-primary-base)]">{{ item.quantity }}x</span> {{ item.name }} <span v-if="item.variant" class="text-[var(--color-text-muted)]">({{ item.variant.name }})</span>
-                </div>
-              </td>
-              <td class="px-6 py-4 font-bold whitespace-nowrap">{{ formatPrice(order.total) }}</td>
-              <td class="px-6 py-4 font-bold">
-                <span :class="{
-                  'text-yellow-500': order.status === 'Yangi',
-                  'text-blue-500': order.status === 'Qabul qilindi',
-                  'text-green-500': order.status === 'Yetkazildi',
-                  'text-red-500': order.status === 'Bekor qilindi'
-                }">{{ order.status }}</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- Bestseller Grid by Category -->
+      <div v-if="bestsellers.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div 
+          v-for="item in bestsellers" 
+          :key="item.categoryId"
+          class="bg-[var(--color-background)] rounded-2xl p-4 border border-[var(--color-surface-light)]/50 hover:border-[var(--color-primary-base)]/30 transition-colors"
+        >
+          <!-- Category badge -->
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold text-[var(--color-text-muted)] bg-[var(--color-surface-light)] px-2.5 py-1 rounded-lg">
+              {{ item.categoryName }}
+            </span>
+            <span class="text-xs text-[var(--color-text-muted)]">
+              {{ periodLabel }}
+            </span>
+          </div>
+          <!-- Product Info -->
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-[var(--color-surface-light)] overflow-hidden flex-shrink-0">
+              <img v-if="item.image" :src="item.image" :alt="item.name" class="w-full h-full object-cover" />
+              <div v-else class="w-full h-full flex items-center justify-center text-lg">🍽️</div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-bold text-[var(--color-text-main)] text-sm truncate">{{ item.name }}</h3>
+              <div class="flex items-center gap-2 mt-0.5">
+                <span class="text-[var(--color-primary-base)] font-extrabold text-lg">{{ item.count }}</span>
+                <span class="text-[var(--color-text-muted)] text-xs">ta sotildi</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty Bestseller State -->
+      <div v-else class="text-center py-8 text-[var(--color-text-muted)] text-sm">
+        {{ periodLabel }} uchun hali buyurtmalar yo'q
+      </div>
+    </div>
+
+    <!-- 📋 Recent Orders (Compact) -->
+    <div class="bg-[var(--color-surface-base)] border border-[var(--color-surface-light)] rounded-3xl p-5 sm:p-6 shadow-sm">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-bold text-[var(--color-text-main)] flex items-center gap-2">
+          <span>📋</span> Oxirgi buyurtmalar
+        </h2>
+        <span class="text-xs text-[var(--color-text-muted)] bg-[var(--color-surface-light)] px-2.5 py-1 rounded-lg font-bold">
+          So'nggi {{ recentOrders.length }} ta
+        </span>
+      </div>
+
+      <div v-if="recentOrders.length === 0" class="text-center py-8 text-[var(--color-text-muted)] text-sm">
+        Hali buyurtmalar yo'q
+      </div>
+
+      <div v-else class="space-y-2">
+        <div 
+          v-for="order in recentOrders" 
+          :key="order.id"
+          class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 bg-[var(--color-background)] rounded-xl px-4 py-3 border border-[var(--color-surface-light)]/50 hover:border-[var(--color-surface-light)] transition-colors"
+        >
+          <!-- Left: Customer & Items -->
+          <div class="flex items-center gap-3 flex-1 min-w-0">
+            <!-- Avatar circle -->
+            <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+              :class="{
+                'bg-yellow-500/15 text-yellow-500': order.status === 'Yangi',
+                'bg-blue-500/15 text-blue-500': order.status === 'Qabul qilindi',
+                'bg-green-500/15 text-green-500': order.status === 'Yetkazildi',
+                'bg-red-500/15 text-red-500': order.status === 'Bekor qilindi'
+              }"
+            >
+              {{ getInitials(order.name) }}
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-sm text-[var(--color-text-main)] truncate">{{ order.name || 'Noma\'lum' }}</span>
+                <span v-if="order.phone" class="text-xs text-[var(--color-text-muted)] hidden sm:inline">{{ order.phone }}</span>
+              </div>
+              <div class="text-xs text-[var(--color-text-muted)] truncate mt-0.5">
+                {{ order.items.map(i => `${i.quantity}x ${i.name}`).join(', ') }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Price & Status -->
+          <div class="flex items-center gap-3 sm:gap-4 pl-12 sm:pl-0">
+            <span class="font-bold text-sm text-[var(--color-text-main)] whitespace-nowrap">{{ formatPrice(order.total) }}</span>
+            <span 
+              class="text-xs font-bold px-2.5 py-1 rounded-lg whitespace-nowrap"
+              :class="{
+                'bg-yellow-500/15 text-yellow-500': order.status === 'Yangi',
+                'bg-blue-500/15 text-blue-500': order.status === 'Qabul qilindi',
+                'bg-green-500/15 text-green-500': order.status === 'Yetkazildi',
+                'bg-red-500/15 text-red-500': order.status === 'Bekor qilindi'
+              }"
+            >{{ order.status }}</span>
+            <span class="text-xs text-[var(--color-text-muted)] whitespace-nowrap hidden sm:inline">{{ formatTime(order.date) }}</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -100,7 +192,10 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useAppStore } from '../../store'
+import { API_URL } from '../../config'
 
+const store = useAppStore()
 const orders = ref([])
 const isLoading = ref(false)
 
@@ -109,19 +204,24 @@ const formatPrice = (price) => {
   return price.toLocaleString('uz-UZ') + ' UZS'
 }
 
-const formatDate = (isoString) => {
+const formatTime = (isoString) => {
   if (!isoString) return ''
   const date = new Date(isoString)
   return date.toLocaleString('uz-UZ', { 
-    day: '2-digit', month: '2-digit', year: 'numeric',
+    day: '2-digit', month: '2-digit',
     hour: '2-digit', minute: '2-digit'
   })
+}
+
+const getInitials = (name) => {
+  if (!name) return '?'
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
 }
 
 const fetchOrders = async () => {
   isLoading.value = true
   try {
-    const response = await fetch('http://localhost:5000/orders')
+    const response = await fetch(`${API_URL}/orders`)
     const data = await response.json()
     if (data.success) {
       orders.value = data.orders
@@ -135,9 +235,13 @@ const fetchOrders = async () => {
 
 onMounted(() => {
   fetchOrders()
+  // Also ensure store has menu data for category names
+  if (store.categories.length === 0) {
+    store.fetchMenuData()
+  }
 })
 
-// Calculations
+// --- Time Filters ---
 const isToday = (date) => {
   const d = new Date(date)
   const today = new Date()
@@ -148,10 +252,13 @@ const isToday = (date) => {
 
 const isThisWeek = (date) => {
   const d = new Date(date)
-  const today = new Date()
-  const firstDay = new Date(today.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1))) // Monday
-  firstDay.setHours(0,0,0,0)
-  return d >= firstDay
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const dayOfWeek = today.getDay() || 7 // Monday = 1
+  const monday = new Date(today)
+  monday.setDate(today.getDate() - dayOfWeek + 1)
+  monday.setHours(0,0,0,0)
+  return d >= monday
 }
 
 const isThisMonth = (date) => {
@@ -161,55 +268,104 @@ const isThisMonth = (date) => {
     d.getFullYear() === today.getFullYear()
 }
 
-// Stats computed
+// --- Stats ---
 const validOrders = computed(() => orders.value.filter(o => o.status !== 'Bekor qilindi'))
 
 const todayOrders = computed(() => validOrders.value.filter(o => isToday(o.date)))
-const todayRevenue = computed(() => todayOrders.value.reduce((sum, o) => sum + o.total, 0))
+const todayRevenue = computed(() => todayOrders.value.reduce((sum, o) => sum + (o.total || 0), 0))
 const todayOrdersCount = computed(() => todayOrders.value.length)
 
 const weekOrders = computed(() => validOrders.value.filter(o => isThisWeek(o.date)))
-const weekRevenue = computed(() => weekOrders.value.reduce((sum, o) => sum + o.total, 0))
+const weekRevenue = computed(() => weekOrders.value.reduce((sum, o) => sum + (o.total || 0), 0))
 const weekOrdersCount = computed(() => weekOrders.value.length)
 
 const monthOrders = computed(() => validOrders.value.filter(o => isThisMonth(o.date)))
-const monthRevenue = computed(() => monthOrders.value.reduce((sum, o) => sum + o.total, 0))
+const monthRevenue = computed(() => monthOrders.value.reduce((sum, o) => sum + (o.total || 0), 0))
 const monthOrdersCount = computed(() => monthOrders.value.length)
 
 const totalDeliveredCount = computed(() => orders.value.filter(o => o.status === 'Yetkazildi').length)
 
-const exportToExcel = () => {
-  if (todayOrders.value.length === 0) return;
+// --- Bestseller Logic ---
+const periods = [
+  { key: 'today', label: 'Bugun' },
+  { key: 'week', label: 'Hafta' },
+  { key: 'month', label: 'Oy' }
+]
 
-  // Add UTF-8 BOM to fix Excel encoding issues
-  const BOM = '\uFEFF';
-  const headers = ['Buyurtma ID', 'Sana', 'Taomlar', 'Summa (UZS)', 'Holati'];
+const activePeriod = ref('today')
+
+const periodLabel = computed(() => {
+  return periods.find(p => p.key === activePeriod.value)?.label || ''
+})
+
+const periodOrders = computed(() => {
+  switch (activePeriod.value) {
+    case 'today': return todayOrders.value
+    case 'week': return weekOrders.value
+    case 'month': return monthOrders.value
+    default: return todayOrders.value
+  }
+})
+
+const bestsellers = computed(() => {
+  const categories = store.categories
+  if (!categories.length || !periodOrders.value.length) return []
+
+  // Count items sold per product across all orders in the period
+  const productCounts = {}
   
-  const rows = todayOrders.value.map(order => {
-    const itemsStr = order.items.map(item => `${item.quantity}x ${item.name}${item.variant ? ` (${item.variant.name})` : ''}`).join('; ');
-    return [
-      `#${order.id}`,
-      formatDate(order.date),
-      `"${itemsStr}"`, // wrap in quotes to handle commas/semicolons inside
-      order.total,
-      order.status
-    ];
-  });
+  periodOrders.value.forEach(order => {
+    if (!order.items) return
+    order.items.forEach(item => {
+      const key = item.productId || item.name
+      if (!productCounts[key]) {
+        productCounts[key] = {
+          name: item.name,
+          productId: item.productId,
+          count: 0,
+          image: null
+        }
+      }
+      productCounts[key].count += item.quantity || 1
+    })
+  })
 
-  const csvContent = BOM + [
-    headers.join(','),
-    ...rows.map(row => row.join(','))
-  ].join('\n');
+  // Find the product info from store for images and categoryId
+  const results = []
+  
+  categories.forEach(cat => {
+    // Get all products in this category
+    const categoryProducts = store.products.filter(p => p.categoryId === cat.id)
+    
+    // Find the best-selling product in this category
+    let bestProduct = null
+    let bestCount = 0
 
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.setAttribute('href', url);
-  const dateStr = new Date().toISOString().split('T')[0];
-  link.setAttribute('download', `kunlik_buyurtmalar_${dateStr}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
+    categoryProducts.forEach(prod => {
+      // Match by productId or name
+      const countEntry = productCounts[prod.id] || productCounts[prod.name]
+      if (countEntry && countEntry.count > bestCount) {
+        bestCount = countEntry.count
+        bestProduct = prod
+      }
+    })
 
+    if (bestProduct && bestCount > 0) {
+      results.push({
+        categoryId: cat.id,
+        categoryName: cat.name,
+        name: bestProduct.name,
+        image: bestProduct.image,
+        count: bestCount
+      })
+    }
+  })
+
+  return results
+})
+
+// --- Recent Orders (last 5) ---
+const recentOrders = computed(() => {
+  return [...orders.value].reverse().slice(0, 5)
+})
 </script>

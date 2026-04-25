@@ -45,16 +45,17 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
             </button>
-            <div class="flex items-center bg-[var(--color-background)] rounded-lg px-2 py-1">
-              <button @click="store.decrementQuantity(index)" class="w-6 h-6 flex items-center justify-center text-[var(--color-text-main)] hover:text-[var(--color-primary-base)] transition">-</button>
-              <span class="w-6 text-center text-sm font-semibold text-[var(--color-text-main)]">{{ item.quantity }}</span>
-              <button @click="store.incrementQuantity(index)" class="w-6 h-6 flex items-center justify-center text-[var(--color-text-main)] hover:text-[var(--color-primary-base)] transition">+</button>
+            <div class="flex items-center bg-[var(--color-background)] rounded-lg px-2 py-1 shadow-inner border border-[var(--color-surface-light)]/50">
+              <button @click="store.decrementQuantity(index)" class="w-7 h-7 flex items-center justify-center text-[var(--color-text-main)] hover:text-[var(--color-primary-base)] transition-colors text-lg font-bold">-</button>
+              <div class="px-2 min-w-[3rem] text-center">
+                <span class="text-sm font-extrabold text-[var(--color-text-main)]">{{ item.unit === 'kg' ? item.quantity.toFixed(2) : item.quantity }}</span>
+                <span class="block text-[10px] text-[var(--color-text-muted)] font-bold uppercase -mt-1">{{ item.unit === 'kg' ? 'kg' : 'ta' }}</span>
+              </div>
+              <button @click="store.incrementQuantity(index)" class="w-7 h-7 flex items-center justify-center text-[var(--color-text-main)] hover:text-[var(--color-primary-base)] transition-colors text-lg font-bold">+</button>
             </div>
           </div>
         </div>
       </div>
-
-
 
       <!-- Checkout Footer -->
       <div v-if="store.cartItems.length > 0" class="p-6 pt-4 bg-[var(--color-surface-base)] border-t border-[var(--color-surface-light)] shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] shrink-0">
@@ -74,76 +75,37 @@
         </div>
         
         <div class="flex gap-3">
-          <button @click="store.clearCart()" :disabled="isSubmitting" class="w-1/3 bg-[var(--color-surface-light)] hover:bg-[var(--color-surface-light)]/80 text-[var(--color-text-main)] font-semibold py-3.5 rounded-xl transition-colors disabled:opacity-50">
+          <button @click="store.clearCart()" class="w-1/3 bg-[var(--color-surface-light)] hover:bg-[var(--color-surface-light)]/80 text-[var(--color-text-main)] font-semibold py-3.5 rounded-xl transition-colors">
             Tozalash
           </button>
-          <button @click="placeOrder" :disabled="isSubmitting" class="w-2/3 bg-[var(--color-primary-base)] hover:bg-[var(--color-primary-dark)] text-white font-semibold py-3.5 rounded-xl shadow-lg transition-colors flex items-center justify-center disabled:opacity-70">
-            <span v-if="!isSubmitting">Buyurtma berish</span>
-            <svg v-else class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          <button @click="goToCheckout" class="w-2/3 bg-[var(--color-primary-base)] hover:bg-[var(--color-primary-dark)] text-white font-semibold py-3.5 rounded-xl shadow-lg transition-colors flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
+            Davom etish
           </button>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Checkout Modal -->
+  <CheckoutModal />
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { useAppStore } from '../store'
-import { useToast } from 'vue-toastification'
+import CheckoutModal from './CheckoutModal.vue'
 
 const store = useAppStore()
-const toast = useToast()
-
-
 
 const formatPrice = (price) => {
   return price.toLocaleString('uz-UZ') + ' UZS'
 }
 
-const isSubmitting = ref(false)
-
-const placeOrder = async () => {
-  if (store.cartItems.length === 0) return
-  
-  isSubmitting.value = true
-  
-  try {
-    // 1. Prepare data
-    const orderData = {
-      items: store.cartItems,
-      subtotal: store.cartSubtotal,
-      deliveryFee: store.deliveryFee,
-      total: store.cartTotal
-    }
-
-    // 2. Send to backend
-    const response = await fetch('http://localhost:5000/order', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(orderData)
-    })
-
-    if (!response.ok) {
-      throw new Error('Server xatosi')
-    }
-
-    const result = await response.json()
-    console.log('Server javobi:', result)
-    
-    // 3. Handle success
-    toast.success("Buyurtmangiz muvaffaqiyatli qabul qilindi!")
-    store.clearCart()
-  } catch (error) {
-    console.error("Xatolik yuz berdi:", error)
-    toast.error("Buyurtma yuborishda xatolik yuz berdi. Iltimos qayta urinib ko'ring.")
-  } finally {
-    isSubmitting.value = false
-  }
+const goToCheckout = () => {
+  store.toggleCart()
+  store.openCheckout()
 }
 </script>
+
